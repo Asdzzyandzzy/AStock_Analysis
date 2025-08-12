@@ -1,0 +1,5 @@
+2025-08-12T14:34:23.040666	sh600519	2024-07-01	RuntimeError("获取 sh600519 2024-07-01 逐笔失败: stock_zh_a_tick_tx_js() got an unexpected keyword argument 'trade_date'")
+2025-08-12T14:34:32.068040	sh600519	2024-07-02	RuntimeError("获取 sh600519 2024-07-02 逐笔失败: stock_zh_a_tick_tx_js() got an unexpected keyword argument 'trade_date'")
+2025-08-12T14:34:41.097975	sh600519	2024-07-03	RuntimeError("获取 sh600519 2024-07-03 逐笔失败: stock_zh_a_tick_tx_js() got an unexpected keyword argument 'trade_date'")
+2025-08-12T14:34:50.118059	sh600519	2024-07-04	RuntimeError("获取 sh600519 2024-07-04 逐笔失败: stock_zh_a_tick_tx_js() got an unexpected keyword argument 'trade_date'")
+2025-08-12T14:34:59.151903	sh600519	2024-07-05	RuntimeError("获取 sh600519 2024-07-05 逐笔失败: stock_zh_a_tick_tx_js() got an unexpected keyword argument 'trade_date'")
