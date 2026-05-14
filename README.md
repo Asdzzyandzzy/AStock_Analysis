@@ -1,63 +1,64 @@
 # AStock Analysis
 
-AStock Analysis 是一个基于 Python、Streamlit 和 AKShare 的 A 股日内逐笔成交分析项目。项目用于观察分时成交、大单/超大单、主动买卖盘、主力资金流入流出估算、成交价位分布、逐笔行为提示以及可选机器学习示例。
+AStock Analysis is a Python and Streamlit project for intraday A-share tick analysis. It uses AKShare as the data source and provides research-oriented views for intraday prices, large orders, active buy/sell flow, estimated main-fund movement, price-level distribution, tick-level behavior signals, anomaly alerts, and optional machine learning examples.
 
-> 风险提示：本项目所有结果仅供学习、研究和数据观察，不构成任何投资建议或交易依据。AKShare 数据接口、字段和可用性可能随数据源变化。
+> Risk disclaimer: This project is for learning, research, and data observation only. It does not constitute investment advice, trading advice, or a recommendation to buy or sell any security. AKShare data availability, latency, and field names may change with upstream data providers.
 
-## 当前项目常见问题
+## Existing Project Issues
 
-重构前项目主要是脚本式结构，几个 Streamlit/命令行文件平铺在根目录中，数据获取、字段清洗、指标计算、可视化和页面逻辑混在一起。这样会带来几个问题：
+Before refactoring, the project was mostly organized as several standalone scripts in the repository root. Data fetching, field cleaning, indicator calculation, visualization, and Streamlit UI logic were tightly coupled. This created several maintenance risks:
 
-- AKShare 字段变化时，需要在多个页面重复修改。
-- 大单、买卖盘、价格分布等逻辑复用困难。
-- 缺少统一异常处理、空数据处理、缓存、日志和配置。
-- 机器学习功能没有独立边界，容易影响主程序稳定性。
-- 缺少 README、依赖文件和目录说明，后续维护成本较高。
+- AKShare field changes had to be handled repeatedly in multiple scripts.
+- Large-order, buy/sell-flow, and price-distribution logic was difficult to reuse.
+- Error handling, empty-data handling, caching, logging, and configuration were not centralized.
+- Machine learning code had no clear boundary and could affect the main application.
+- The project lacked dependency files, project metadata, and complete documentation.
 
-## 功能
+## Features
 
-- 支持 AKShare 逐笔数据接口：
+- AKShare intraday/tick data support:
   - `stock_zh_a_tick_tx_js`
   - `stock_intraday_em`
-- 日内核心指标：
-  - 日内高点、低点、VWAP、均价
-  - 成交金额、成交量、分钟级变化
-  - 成交点位分布
-- 大单与买卖盘：
-  - 大单/超大单识别
-  - 主动买入、主动卖出金额统计
-  - 主力资金净流入估算
-  - 买卖盘强弱展示
-- 逐笔成交行为提示：
-  - 价格拉升
-  - 砸盘
-  - 疑似吸筹
-  - 疑似出货
-  - 疑似对倒
-  - 脉冲式放量
-- 时间段分析：
-  - 开盘
-  - 盘中
-  - 尾盘
-- 异常提醒：
-  - 突然放量
-  - 大单密集
-  - 价格快速波动
-- 可视化：
-  - 价格走势与成交金额
-  - 大单分布
-  - 买卖方向
-  - 资金净流入
-  - 成交价位分布
-- 可选机器学习：
-  - IsolationForest 异常成交检测
-  - LogisticRegression / RandomForest 短期方向分类示例
-  - KMeans 成交行为聚类
-  - 分钟级特征构造与解释
+- Intraday indicators:
+  - Intraday high and low
+  - VWAP and average price
+  - Turnover amount and volume changes
+  - Price-level transaction distribution
+- Large order and order-flow analysis:
+  - Large-order and super-large-order identification
+  - Active buy and active sell amount
+  - Estimated main-fund net inflow
+  - Buy/sell strength comparison
+- Tick-level behavior signals:
+  - Price lift
+  - Heavy sell pressure
+  - Possible accumulation
+  - Possible distribution
+  - Possible wash trading
+  - Pulse-like volume spike
+- Session analysis:
+  - Opening session
+  - Midday/intraday session
+  - Closing session
+- Anomaly alerts:
+  - Sudden volume spike
+  - Dense large-order activity
+  - Rapid price movement
+- Visualizations:
+  - Intraday price and turnover chart
+  - Large-order distribution
+  - Buy/sell direction chart
+  - Estimated net-fund-flow chart
+  - Transaction price-level distribution
+- Optional machine learning examples:
+  - IsolationForest for abnormal transaction detection
+  - LogisticRegression / RandomForest for short-term direction classification
+  - KMeans for transaction behavior clustering
+  - Feature construction and feature explanation examples
 
-## 安装
+## Installation
 
-建议使用 Python 3.10 及以上版本。
+Python 3.10 or later is recommended.
 
 ```bash
 python -m venv .venv
@@ -65,27 +66,27 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-如果只想安装主程序依赖，也可以使用：
+You can also install the main package dependencies with:
 
 ```bash
 pip install .
 ```
 
-机器学习功能需要：
+Machine learning features require the optional ML dependencies:
 
 ```bash
 pip install ".[ml]"
 ```
 
-## 运行
+## Run
 
-推荐入口：
+Recommended entry point:
 
 ```bash
 streamlit run app.py
 ```
 
-旧入口仍保留兼容：
+Legacy entry points are still kept for compatibility:
 
 ```bash
 streamlit run sellbuyAnalyis.py
@@ -93,75 +94,79 @@ streamlit run 日内分时数据实时刷新.py
 python 昨日大金额买卖盘分析.py
 ```
 
-## 推荐目录结构
+## Recommended Directory Structure
 
 ```text
 AStock_Analysis/
-  app.py                         # Streamlit 主入口
-  config.yaml                    # 默认配置
-  requirements.txt               # 依赖列表
-  pyproject.toml                 # 项目元数据与可选依赖
-  README.md                      # 项目说明
-  sellbuyAnalyis.py              # 旧 Streamlit 入口兼容
-  日内分时数据实时刷新.py          # 旧 Streamlit 入口兼容
-  昨日大金额买卖盘分析.py          # 命令行示例
+  app.py                         # Main Streamlit entry point
+  config.yaml                    # Default runtime configuration
+  requirements.txt               # Dependency list
+  pyproject.toml                 # Project metadata and optional dependencies
+  README.md                      # Project documentation
+  sellbuyAnalyis.py              # Legacy Streamlit entry point
+  日内分时数据实时刷新.py          # Legacy Streamlit entry point
+  昨日大金额买卖盘分析.py          # Command-line example
   astock_analysis/
-    config.py                    # 配置读取
+    config.py                    # Config loader
     data/
-      cleaning.py                # 字段兼容、标准化、股票代码规范化
-      fetchers.py                # AKShare 数据获取
+      cleaning.py                # Field compatibility and normalization
+      fetchers.py                # AKShare data fetchers
     indicators/
-      intraday.py                # 日内指标、资金流、分档、时间段分析
-      tick_patterns.py           # 逐笔行为识别与异常提醒
+      intraday.py                # Intraday indicators and session analysis
+      tick_patterns.py           # Tick-level behavior signals and alerts
     ml/
-      features.py                # 分钟级特征工程
-      models.py                  # IsolationForest、分类、聚类示例
+      features.py                # Minute-level feature engineering
+      models.py                  # IsolationForest, classifiers, and clustering examples
     visualization/
-      charts.py                  # Plotly 图表
+      charts.py                  # Plotly charts
     utils/
-      logging.py                 # 日志
+      logging.py                 # Logging utilities
 ```
 
-## 数据源说明
+## Data Sources
 
-项目使用 AKShare 获取 A 股日内逐笔/分时成交数据。不同接口返回字段可能不同，因此项目统一转换为标准字段：
+The project uses AKShare to fetch A-share intraday and tick-level transaction data. Different AKShare interfaces may return different field names, so the project normalizes input data into a standard schema:
 
-| 标准字段 | 含义 | 兼容来源字段示例 |
+| Standard Field | Meaning | Compatible Source Fields |
 | --- | --- | --- |
-| `time` | 成交时间 | 时间、成交时间 |
-| `price` | 成交价格 | 成交价格、成交价、价格 |
-| `volume` | 成交量或手数 | 成交量、手数、成交手数 |
-| `amount` | 成交金额 | 成交金额、金额 |
-| `side` | 买卖盘方向 | 性质、买卖盘性质、方向 |
+| `time` | Transaction time | 时间, 成交时间 |
+| `price` | Transaction price | 成交价格, 成交价, 价格 |
+| `volume` | Volume or lots | 成交量, 手数, 成交手数 |
+| `amount` | Transaction amount | 成交金额, 金额 |
+| `side` | Buy/sell direction | 性质, 买卖盘性质, 方向 |
 
-当接口没有直接返回成交金额时，项目会使用 `成交价 * 手数 * 100` 进行估算。
+If a data interface does not directly provide transaction amount, the project estimates it with:
 
-## 指标解释
+```text
+price * lots * 100
+```
 
-- VWAP：成交量加权平均价格，用于观察日内成交重心。
-- 大单/超大单：按成交金额阈值划分，默认大单为 50 万元，超大单为 200 万元。
-- 主动买入占比：主动买入金额占总成交金额的比例。
-- 主力净流入估算：主动买入金额减主动卖出金额。由于逐笔数据的方向判定依赖数据源，该值只能作为估算。
-- 成交密集价位：成交金额最大的价位，可用于观察日内资金集中成交区域。
-- 分钟级波动率：分钟内最高价与最低价的相对差值。
-- 异常提醒：基于规则判断突然放量、大单密集和价格快速波动，仅作研究提示。
+## Indicator Notes
 
-## 机器学习示例
+- VWAP: Volume-weighted average price. It is used to observe the intraday transaction center of gravity.
+- Large order / super-large order: Orders are classified by transaction amount. Defaults are RMB 500,000 for large orders and RMB 2,000,000 for super-large orders.
+- Active buy ratio: Active buy amount divided by total transaction amount.
+- Estimated main-fund net inflow: Active buy amount minus active sell amount. This is only an estimate because buy/sell direction depends on the upstream data source.
+- Dense transaction price: The price level with the largest transaction amount.
+- Minute-level volatility: The relative range between minute high and minute low.
+- Anomaly alerts: Rule-based hints for sudden volume spikes, dense large-order activity, and rapid price movement.
 
-机器学习模块位于 `astock_analysis/ml/`，默认不影响主程序运行。页面中勾选“启用机器学习示例”后才会运行。
+## Machine Learning Examples
 
-特征包括：
+The ML module is located in `astock_analysis/ml/`. It is optional and does not affect the main application unless enabled in the Streamlit sidebar.
 
-- 价格涨跌幅
-- 成交量变化率
-- 大单金额占比
-- 主动买入占比
-- 主力净流入
-- VWAP 偏离
-- 分钟级波动率
-- 成交密集价位偏离
+Minute-level features include:
 
-代码示例：
+- Price return
+- Volume change rate
+- Large-order amount ratio
+- Active buy ratio
+- Estimated main-fund net inflow
+- VWAP deviation
+- Minute-level volatility
+- Distance from dense transaction price
+
+Example:
 
 ```python
 from astock_analysis.data.fetchers import fetch_tick_tx
@@ -180,28 +185,28 @@ print(direction_result.output)
 print(cluster_result.output)
 ```
 
-## 文件用途
+## File Guide
 
-- `app.py`：统一 Streamlit 页面，包含总览、大单、逐笔行为、异常提醒、机器学习和数据查看。
-- `astock_analysis/data/fetchers.py`：封装 AKShare 接口和异常处理。
-- `astock_analysis/data/cleaning.py`：字段兼容、标准化、股票代码格式处理。
-- `astock_analysis/indicators/intraday.py`：核心指标计算。
-- `astock_analysis/indicators/tick_patterns.py`：逐笔行为识别和异常提醒。
-- `astock_analysis/visualization/charts.py`：Plotly 图表。
-- `astock_analysis/ml/features.py`：机器学习特征构造。
-- `astock_analysis/ml/models.py`：模型训练、预测和解释示例。
-- `config.yaml`：默认股票代码、缓存时间、大单阈值、异常提醒阈值。
+- `app.py`: Unified Streamlit app with overview, large-order analysis, tick behavior signals, anomaly alerts, ML examples, and raw data views.
+- `astock_analysis/data/fetchers.py`: AKShare interface wrappers and fetch error handling.
+- `astock_analysis/data/cleaning.py`: Field compatibility, normalization, and stock-code formatting.
+- `astock_analysis/indicators/intraday.py`: Core intraday indicators.
+- `astock_analysis/indicators/tick_patterns.py`: Tick-level behavior signal detection and anomaly alerts.
+- `astock_analysis/visualization/charts.py`: Plotly chart builders.
+- `astock_analysis/ml/features.py`: Machine learning feature construction.
+- `astock_analysis/ml/models.py`: Model training, prediction, clustering, and feature explanation examples.
+- `config.yaml`: Default symbol, cache TTL, large-order thresholds, and alert thresholds.
 
-## 后续扩展方向
+## Future Extensions
 
-- 增加历史日内数据落盘和多日回测。
-- 增加多股票监控列表与板块维度对比。
-- 增加盘口委托队列、买一卖一变化和撤单分析。
-- 增加更严格的交易行为规则校验，降低误报。
-- 接入本地数据库，例如 SQLite、DuckDB 或 PostgreSQL。
-- 为机器学习模块增加标签生成、训练集管理、模型保存和离线评估。
-- 增加单元测试和模拟 AKShare 字段变化的回归测试。
+- Persist historical intraday data and support multi-day backtesting.
+- Add multi-stock watchlists and sector-level comparison.
+- Add order-book queue analysis and bid/ask change tracking.
+- Improve behavior-signal validation rules to reduce false positives.
+- Add local storage with SQLite, DuckDB, or PostgreSQL.
+- Add ML dataset management, label generation, model persistence, and offline evaluation.
+- Add unit tests and regression tests for AKShare field-name changes.
 
-## 风险提示
+## Risk Disclaimer
 
-本项目不是量化交易系统，也不提供买卖建议。逐笔成交方向、主力资金流和交易行为标签均依赖数据源字段与规则估算，可能存在延迟、缺失、误判或接口变化。任何投资决策都需要结合更多信息并自行承担风险。
+This project is not a trading system and does not provide investment advice. Tick direction, estimated main-fund flow, and behavior labels are derived from upstream data fields and rule-based estimates. They may be delayed, incomplete, inaccurate, or affected by data-interface changes. Any investment decision requires independent judgment and risk assessment.
