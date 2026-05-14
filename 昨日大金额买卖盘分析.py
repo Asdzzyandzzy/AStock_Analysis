@@ -1,30 +1,34 @@
-import akshare as ak
+"""命令行示例：大金额买卖盘分析。"""
+
+from __future__ import annotations
+
 import pandas as pd
 
-# 让 pandas 显示完整数字而不是科学计数法
-pd.set_option('display.float_format', '{:.2f}'.format)
+from astock_analysis.data.cleaning import COLS
+from astock_analysis.data.fetchers import fetch_tick_tx
+from astock_analysis.indicators.intraday import weighted_average_price
 
-# 获取数据
-stock_zh_a_tick_tx = ak.stock_zh_a_tick_tx_js(symbol="sh600941")
+pd.set_option("display.float_format", "{:.2f}".format)
 
-A = 2000000
 
-# 筛选成交金额 > A
-Bigger_than_A = stock_zh_a_tick_tx[stock_zh_a_tick_tx['成交金额'] > A]
+def main(symbol: str = "sh600941", threshold: float = 2_000_000) -> None:
+    df = fetch_tick_tx(symbol)
+    bigger = df[df[COLS.amount] > threshold].copy()
+    print(df)
+    print(bigger)
 
-# 按性质分组统计总金额
-total_amount = Bigger_than_A.groupby("性质")["成交金额"].sum()
+    if bigger.empty:
+        print(f"\n没有发现大于 {threshold:,.0f} 元的成交。")
+        return
 
-# 按金额加权计算均价（金额加权）
-weighted_avg_price = Bigger_than_A.groupby("性质") \
-    .apply(lambda g: (g["成交价格"] * g["成交金额"]).sum() / g["成交金额"].sum())
+    total_amount = bigger.groupby(COLS.side)[COLS.amount].sum()
+    weighted_avg_price = bigger.groupby(COLS.side).apply(weighted_average_price)
+    print(f"\n=== 大于 {threshold:,.0f} 元的交易（买/卖）金额统计 ===")
+    print(total_amount)
+    print(f"\n=== 大于 {threshold:,.0f} 元的交易（买/卖）金额加权均价 ===")
+    print(weighted_avg_price)
+    print("\n风险提示：结果仅供研究，不构成投资建议。")
 
-# 打印结果
-print(stock_zh_a_tick_tx)
-print(Bigger_than_A)
 
-print("\n=== 大于 200 万的交易（买/卖）金额统计 ===")
-print(total_amount)
-
-print("\n=== 大于 200 万的交易（买/卖）金额加权均价 ===")
-print(weighted_avg_price)
+if __name__ == "__main__":
+    main()

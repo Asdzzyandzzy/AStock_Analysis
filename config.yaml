@@ -1,0 +1,9 @@
+default_symbol: sh600941
+intraday_symbol: "600941"
+cache_ttl_seconds: 120
+big_order_amount: 500000
+super_big_order_amount: 2000000
+sudden_volume_window: 5
+sudden_volume_multiplier: 3.0
+rapid_price_change_pct: 0.006
+log_level: INFO
